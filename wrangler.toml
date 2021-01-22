@@ -1,5 +1,5 @@
 name = "mightygumball"
-type = "webpack"
+type = "javascript"
 account_id = "97836032ba6aea7b7dde9d22aee525e5"
 workers_dev = true
 route = ""

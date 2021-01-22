@@ -3,7 +3,6 @@
 // var http = require('http');
 // var url = require('url');
 // var cities = require("./cities.js");
-var cities = await GUMBALL.get("cities");
 
 // var time;
 
@@ -136,17 +135,20 @@ function createGumballReport() {
 	return {name: cityName, time: cityTime, sales: sold, longitude: cityLong, latitude: cityLat };
 }
 
+async function handleRequest(request) {
+	var cities = await GUMBALL.get("cities", "json");
 
-addEventListener("fetch", event => {
 	const url = new URL(event.request.url)
 	const data = await getResponse(url.query)
 	// const json = JSON.stringify(data, null, 2)
-  
-	return event.respondWith(
-	  new Response(data, {
+	
+	return new Response(data, {
 		headers: {
 		  "content-type": "application/json;charset=UTF-8"
 		}
 	  })
-	)
+	
+}
+addEventListener("fetch", event => {
+	event.respondWith(handleRequest(event.request))
   })
