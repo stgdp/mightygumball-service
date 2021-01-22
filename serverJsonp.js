@@ -1,3 +1,5 @@
+var log, cities;
+
 /* serverJsonp.js */
 
 // var http = require('http');
@@ -6,7 +8,7 @@
 
 // var time;
 
-var log = createLog();
+
 // updateLog();
 
 // var server_port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
@@ -98,7 +100,7 @@ function getStart(time) {
 
 // create the initial log
 function createLog() {
-   log = [];
+   let log = [];
    
    for(i=0;i<1000;i++) {
       log[i] = createGumballReport();
@@ -125,18 +127,19 @@ function createLog() {
 
 function createGumballReport() {
 	var date = new Date();
-	ind = Math.floor(Math.random() * cities.city.length);
+	ind = Math.floor(Math.random() * cities.length);
 	sold = Math.floor(Math.random()*9 + 1);
-	cityName = cities.city[ind].Name;
+	cityName = cities[ind].Name;
 	cityTime = date.getTime();
-	cityLong = cities.city[ind].Longitude;
-	cityLat = cities.city[ind].Latitude;
+	cityLong = cities[ind].Longitude;
+	cityLat = cities[ind].Latitude;
 
 	return {name: cityName, time: cityTime, sales: sold, longitude: cityLong, latitude: cityLat };
 }
 
 async function handleRequest(request) {
-	var cities = await GUMBALL.get("cities", "json");
+	cities = await GUMBALL.get("cities", "json");
+	log = createLog();
 
 	const url = new URL(request.url)
 	const data = getResponse(url.query)
