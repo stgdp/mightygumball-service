@@ -27,46 +27,36 @@ function getResponse(query) {
 	var time;
 	var callback;
 	if (query) {
-		var queryVars = query.split("&");
-		for (var i=0; i < queryVars.length; i++) {
-			// get the callback function name
-			if (queryVars[i].substr(0, 8) == "callback") {
-				var pos = queryVars[i].indexOf("=", 0);
-				if (pos > 0) {
-					callback = queryVars[i].substr(pos+1);
-				}
-			}
-			// this acts as the random string on the query
-			else if (queryVars[i].substr(0, 6) == "random") {
-				var pos = queryVars[i].indexOf("=", 0);
-				if (pos > 0) {
-					now = queryVars[i].substr(pos+1);
-				}
-			}
-			// this is the newest time stamp
-			else if (queryVars[i].substr(0, 14) == "lastreporttime") {
-				var pos = queryVars[i].indexOf("=", 0);
-				if (pos > 0) {
-					time = queryVars[i].substr(pos+1);
-				}
+		for( let pair of query.entries() ) {
+			console.log( pair )
+			switch( pair[0] ) {
+				case "callback":
+					callback = pair[1];
+					break;
+				case "random":
+					now = pair[1];
+					break;
+				case "lastreporttime":
+					time = pair[1]
+					break;
 			}
 		}
 	}
 	else {
 		time = query;
 	}
-	
+
 	var response = [];
 	var start;
-	
+
 	if (parseInt(time)) {
 		start = getStart(time);
 	} else {
 		start = 1;
 	}
-	
-	
-	// create the response using the <start> newest 
+
+
+	// create the response using the <start> newest
 	// cities. The newest timestamp is at response[0]!!
 	//for (i = 0; i <= start; i++) {
 	for (i = start; i >= 0; i--) {
@@ -87,21 +77,21 @@ function getResponse(query) {
 // If no info, then return 9 (so we return 9 cities)
 function getStart(time) {
 	time = parseInt(time, 10);
-	
+
 	if (!time) return 1;
 	for(i = 0; i <= 999;i++) {
 		var cityTime = parseInt(log[i].time, 10);
 		if (time >= cityTime) {
 			return i-1;
 		}
-	}	
+	}
 	return 9;
 }
 
 // create the initial log
 function createLog() {
    let log = [];
-   
+
    for(i=0;i<1000;i++) {
       log[i] = createGumballReport();
    }
@@ -117,10 +107,10 @@ function createLog() {
 // 	for(i = 0; i < 999; i++) {
 // 		log2[i+1] = log[i];
 // 	}
-	
+
 //     log2[0] = createGumballReport();
 // 	log = log2;
-	
+
 // 	console.log("update with " + log2[0].name);
 // 	setTimeout(updateLog, Math.floor(Math.random()*5000 + 2000));
 // }
@@ -141,16 +131,16 @@ async function handleRequest(request) {
 	cities = await GUMBALL.get("cities", "json");
 	log = createLog();
 
-	const url = new URL(request.url)
-	const data = getResponse(url.query)
-	// const json = JSON.stringify(data, null, 2)
+	let parsed = new URL( request.url )
+	let params = new URLSearchParams( parsed.search )
+	const data = getResponse(params)
 
 	return new Response(data, {
 		headers: {
-		  "content-type": "application/json;charset=UTF-8"
+		  "content-type": "application/javascript;charset=UTF-8"
 		}
 	  })
-	
+
 }
 addEventListener("fetch", event => {
 	event.respondWith(handleRequest(event.request))

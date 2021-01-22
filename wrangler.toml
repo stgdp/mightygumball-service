@@ -1,9 +1,9 @@
 name = "mightygumball"
 type = "javascript"
-account_id = "97836032ba6aea7b7dde9d22aee525e5"
+account_id = "9cb8fb4f8b18159a7929b6ea2b312b6d"
 workers_dev = true
 route = ""
 zone_id = ""
 kv_namespaces = [
-  { binding = "GUMBALL", id = "f65c13de717d486998db316d6a3c1703", preview_id = "f65c13de717d486998db316d6a3c1703" }
+  { binding = "GUMBALL", id = "78fe2904d3294069bc791916c83474fb", preview_id = "78fe2904d3294069bc791916c83474fb" }
 ]
