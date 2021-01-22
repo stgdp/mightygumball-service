@@ -1,0 +1,9 @@
+name = "mightygumball"
+type = "webpack"
+account_id = "97836032ba6aea7b7dde9d22aee525e5"
+workers_dev = true
+route = ""
+zone_id = ""
+kv_namespaces = [
+  { binding = "GUMBALL", id = "f65c13de717d486998db316d6a3c1703", preview_id = "f65c13de717d486998db316d6a3c1703" }
+]

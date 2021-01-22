@@ -1,28 +1,30 @@
 /* serverJsonp.js */
 
-var http = require('http');
-var url = require('url');
-var cities = require("./cities.js");
+// var http = require('http');
+// var url = require('url');
+// var cities = require("./cities.js");
+var cities = await GUMBALL.get("cities");
 
-var time;
-var callback;
+// var time;
 
 var log = createLog();
-updateLog();
+// updateLog();
 
-var server_port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
-var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || "0.0.0.0";
+// var server_port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
+// var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || "0.0.0.0";
 
-http.createServer(function (req, res) {
-    var uri = url.parse(req.url).pathname;
-    res.writeHead(200, {'Content-Type': 'text/plain'});
-    res.end(getResponse(url.parse(req.url).query));
-}).listen(server_port, server_ip_address);
-console.log("Server running at " + server_ip_address);
-console.log("Listening on port " + server_port);
+// http.createServer(function (req, res) {
+//     var uri = url.parse(req.url).pathname;
+//     res.writeHead(200, {'Content-Type': 'text/plain'});
+//     res.end(getResponse(url.parse(req.url).query));
+// }).listen(server_port, server_ip_address);
+// console.log("Server running at " + server_ip_address);
+// console.log("Listening on port " + server_port);
 
 function getResponse(query) {
 	var now = 0;
+	var time;
+	var callback;
 	if (query) {
 		var queryVars = query.split("&");
 		for (var i=0; i < queryVars.length; i++) {
@@ -69,6 +71,7 @@ function getResponse(query) {
 	for (i = start; i >= 0; i--) {
 		response.push(log[i]);
 	}
+
 	if (callback != "" && callback != undefined) {
 		return callback + "(" + JSON.stringify(response) + ");";
 	}
@@ -82,7 +85,7 @@ function getResponse(query) {
 // based on the "lastreporttime" paramter.
 // If no info, then return 9 (so we return 9 cities)
 function getStart(time) {
-	var time = parseInt(time, 10);
+	time = parseInt(time, 10);
 	
 	if (!time) return 1;
 	for(i = 0; i <= 999;i++) {
@@ -108,18 +111,18 @@ function createLog() {
 // down by one (so log[1] gets the value of log[0]).
 // Then create a new city report for log[0].
 // Do this every few miliseconds.
-function updateLog() {
-	var log2 = [];
-	for(i = 0; i < 999; i++) {
-		log2[i+1] = log[i];
-	}
+// function updateLog() {
+// 	var log2 = [];
+// 	for(i = 0; i < 999; i++) {
+// 		log2[i+1] = log[i];
+// 	}
 	
-    log2[0] = createGumballReport();
-	log = log2;
+//     log2[0] = createGumballReport();
+// 	log = log2;
 	
-	console.log("update with " + log2[0].name);
-	setTimeout(updateLog, Math.floor(Math.random()*5000 + 2000));
-}
+// 	console.log("update with " + log2[0].name);
+// 	setTimeout(updateLog, Math.floor(Math.random()*5000 + 2000));
+// }
 
 function createGumballReport() {
 	var date = new Date();
@@ -132,3 +135,18 @@ function createGumballReport() {
 
 	return {name: cityName, time: cityTime, sales: sold, longitude: cityLong, latitude: cityLat };
 }
+
+
+addEventListener("fetch", event => {
+	const url = new URL(event.request.url)
+	const data = getResponse(url.query)
+	// const json = JSON.stringify(data, null, 2)
+  
+	return event.respondWith(
+	  new Response(data, {
+		headers: {
+		  "content-type": "application/json;charset=UTF-8"
+		}
+	  })
+	)
+  })
