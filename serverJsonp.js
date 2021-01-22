@@ -21,7 +21,7 @@ var log = createLog();
 // console.log("Server running at " + server_ip_address);
 // console.log("Listening on port " + server_port);
 
-function getResponse(query) {
+async function getResponse(query) {
 	var now = 0;
 	var time;
 	var callback;
@@ -139,7 +139,7 @@ function createGumballReport() {
 
 addEventListener("fetch", event => {
 	const url = new URL(event.request.url)
-	const data = getResponse(url.query)
+	const data = await getResponse(url.query)
 	// const json = JSON.stringify(data, null, 2)
   
 	return event.respondWith(
